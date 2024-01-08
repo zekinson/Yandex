@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtGui import QPainter, QColor, QFont
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QFileDialog
 from random import choice
 
 
@@ -12,9 +12,8 @@ class Gallows(QWidget):
 
     def initUI(self):
         self.alf = {}
-        self.file = QFileDialog.getOpenFileName(self, 'Выбрать файл с словами', '')[0]
-        self.s_word = choice(open('words.txt', 'r', encoding='utf8').read().split())
-
+        self.file = QFileDialog.getOpenFileName(self, 'Выберите файл с словами', '')[0]
+        self.s_word, self.them = choice(open(self.file, 'r', encoding='utf8').read().split()).split(',')
         self.sec_word = self.s_word
         self.setWindowTitle('Gallows')
         self.resize(800, 800)
@@ -23,7 +22,7 @@ class Gallows(QWidget):
         self.secret_word.setFont(QFont('Times', 30))
         self.secret_word.setText("_ " * (len(self.s_word) - 1) + "_")
         self.secret_word.move(400, 100)
-        self.secret_word.resize(300, 50)
+        self.secret_word.resize(500, 50)
         self.res = QPushButton(self, text='Заново')
         self.res.clicked.connect(self.restart)
         self.res.resize(110, 40)
@@ -40,6 +39,11 @@ class Gallows(QWidget):
         self.mis.setFont(QFont('Times', 30))
         self.mis.resize(650, 50)
         self.mis.move(30, 470)
+        self.theme = QLabel(self)
+        self.theme.setText(f'Тема: {self.them}')
+        self.theme.resize(500, 50)
+        self.theme.move(400, 50)
+        self.theme.setFont(QFont('Times', 30))
         self.count = 0
         count = 0
         height = 640
@@ -66,7 +70,7 @@ class Gallows(QWidget):
         self.painter.begin(self)
         self.painter.setPen(self.color)
         if self.count > 0:
-            self.painter.drawLine(30,400,230,400)
+            self.painter.drawLine(30, 400, 230, 400)
         if self.count > 1:
             self.painter.drawLine(80, 400, 80, 100)
         if self.count > 2:
@@ -115,13 +119,14 @@ class Gallows(QWidget):
         for i in self.alf.keys():
             self.alf[i].show()
             self.alf[i].setEnabled(True)
-        self.s_word = choice(open('words.txt', 'r', encoding='utf8').read().split())
+        self.s_word, self.them = choice(open(self.file, 'r', encoding='utf8').read().split()).split(',')
         self.sec_word = self.s_word
         self.secret_word.setText("_ " * (len(self.s_word) - 1) + "_")
         self.secret_word.setFont(QFont('Times', 30))
         self.result.setText('')
         self.result_word.setText('')
         self.mis.setText('Ошибки:')
+        self.theme.setText(f'Тема: {self.them}')
         self.count = 0
         self.update()
 
